@@ -26,8 +26,20 @@ function App() {
             headers: {'Content-Type': 'application/json'}
         });
         if (response.ok) {
+            const addingResponse = await response.json();
+            movie.id = addingResponse.id;
             setMovies([...movies, movie]);
             setAddingMovie(false);
+        }
+    }
+
+    async function handleDelMovie(movie) {
+        const url = `/movies/${movie.id}`
+        const response = await fetch(url, {
+            method: 'DELETE'
+        });
+        if (response.ok) {
+            setMovies(movies.filter(m => m !== movie))
         }
     }
 
@@ -37,7 +49,7 @@ function App() {
             {movies.length === 0
                 ? <p>No movies yet. Maybe add something?</p>
                 : <MoviesList movies={movies}
-                              onDeleteMovie={(movie) => setMovies(movies.filter(m => m !== movie))}
+                              onDeleteMovie={handleDelMovie}
                 />}
             {addingMovie
                 ? <MovieForm onMovieSubmit={handleAddMovie}
