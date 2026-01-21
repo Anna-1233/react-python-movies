@@ -40,3 +40,30 @@
 ul.movies-list {
   list-style: none;
 }
+
+/* Styl dla gwiazdki */
+.required-star {
+    color: #e4631c;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+/* Styl dla tekstu legendy na dole */
+.form-legend {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 1rem;
+    /*font-style: italic;*/
+}
+
+.error-text {
+    color: #e4631c;
+    font-size: 0.8rem;
+    display: block;
+    margin-top: -1rem; /* Aby tekst był bliżej inputa */
+    margin-bottom: 1rem;
+}
+
+/*.input-error {*/
+/*    border-color: #e4631c !important;*/
+/*}*/

@@ -1,3 +1,17 @@
-.idea
-/venv/
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+
+# Python
 __pycache__/
+*.pyc
+
+
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store

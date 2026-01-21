@@ -1,0 +1,32 @@
+/* MovieListItem.css */
+.movie-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #f7f7f7;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+}
+
+.movie-details {
+    margin-right: 10px;
+}
+
+.movie-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.movie-card-header button {
+    margin-bottom: 0; /* Milligram dodaje margines pod przyciskami */
+    padding: 0 1rem;
+    height: 3rem;
+    line-height: 3rem;
+}
+
+.movie-card-description {
+    font-size: 0.95rem;
+    color: #333;
+}

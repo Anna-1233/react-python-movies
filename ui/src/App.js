@@ -1,6 +1,10 @@
 import './App.css';
 import {useEffect, useState} from "react";
 import "milligram";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import MovieForm from "./MovieForm";
 import MoviesList from "./MoviesList";
 
@@ -20,16 +24,40 @@ function App() {
     }, []);
 
     async function handleAddMovie(movie) {
-        const response = await fetch('/movies', {
-            method: 'POST',
-            body: JSON.stringify(movie),
-            headers: {'Content-Type': 'application/json'}
-        });
-        if (response.ok) {
-            const addingResponse = await response.json();
-            movie.id = addingResponse.id;
-            setMovies([...movies, movie]);
-            setAddingMovie(false);
+        try {
+            const response = await fetch('/movies', {
+                method: 'POST',
+                body: JSON.stringify(movie),
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                movie.id = data.id;
+                setMovies([...movies, movie]);
+                setAddingMovie(false);
+                toast.success(`Success: ${data.message}`);
+            } else {
+                // ROZBICIE BŁĘDÓW NA KONKRETNE KODY
+                switch (response.status) {
+                    case 409: // Conflict
+                        toast.warning(`Conflict: ${data.detail}`);
+                        break;
+                    case 400: // Bad Request
+                        toast.error(`Invalid data: ${data.detail}`);
+                        break;
+                    case 500: // Internal Server Error
+                        toast.error("An unexpected server-side error occurred.", {
+                            autoClose: 10000, // Ten toast będzie wisiał dłużej, bo błąd jest poważny
+                        });
+                        break;
+                    default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Unexpected error"}`);
+                }
+            }
+        } catch (e) {
+            toast.error("Connection failed: Is your backend running?");
         }
     }
 
@@ -46,6 +74,10 @@ function App() {
     return (
         <div className="container">
             <h1>My favourite movies to watch</h1>
+
+            {/* Ten komponent musi być tutaj raz – on zarządza wyświetlaniem toastów */}
+            <ToastContainer position="top-left" autoClose={5000} />
+
             {movies.length === 0
                 ? <p>No movies yet. Maybe add something?</p>
                 : <MoviesList movies={movies}
@@ -55,7 +87,7 @@ function App() {
                 ? <MovieForm onMovieSubmit={handleAddMovie}
                              buttonLabel="Add a movie"
                 />
-                : <button onClick={() => setAddingMovie(true)}>Add a movie</button>}
+                : <button onClick={() => setAddingMovie(true)}><FontAwesomeIcon icon={faCirclePlus} /> Go to add a movie</button>}
         </div>
     );
 }

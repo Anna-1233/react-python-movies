@@ -1,24 +1,97 @@
-POST http://127.0.0.1:8000/movies
-Content-Type: application/json
-
-{
-  "title": "title1",
-  "year": 1923,
-  "director": "director1",
-  "description": ""
-}
-
-###
-
+# Test your FastAPI endpoints
 GET http://127.0.0.1:8000/movies
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/movies/7
+GET http://127.0.0.1:8000/movies/3
 Accept: application/json
 
 ###
 
-DELETE http://127.0.0.1:8000/movies/5
+POST http://127.0.0.1:8000/movies
 Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Casablanca",
+  "director": "Michael Curtiz",
+  "year": 1942,
+  "description": "A romantic drama set during World War II in which a cynical nightclub owner must choose between love and moral responsibility in a city filled with refugees and intrigue."
+}
+
+###
+
+PUT http://127.0.0.1:8000/movies/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "Jaws",
+  "director": "Steven Spielberg",
+  "year": 1975,
+  "description": "A small coastal town is terrorized by a massive great white shark, forcing a police chief, a marine biologist, and a seasoned fisherman to confront the deadly threat."
+}
+
+###
+
+DELETE http://127.0.0.1:8000/movies/6
+Accept: application/json
+
+###
+
+DELETE http://127.0.0.1:8000/movies/batch
+Accept: application/json
+Content-Type: application/json
+
+[9, 10]
+
+###
+
+GET http://127.0.0.1:8000/movies/1/actors
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/actors
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/actors/9
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/actors
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Keanu",
+  "surname": "Reeves"
+}
+
+###
+
+PUT http://127.0.0.1:8000/actors/6
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Jodie",
+  "surname": "Foster"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/actors/8
+Accept: application/json
+
+###
+
+DELETE http://127.0.0.1:8000/actors/batch
+Accept: application/json
+Content-Type: application/json
+
+[29, 30]
