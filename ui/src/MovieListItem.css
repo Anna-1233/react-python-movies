@@ -19,14 +19,21 @@
     margin-bottom: 8px;
 }
 
-.movie-card-header button {
-    margin-bottom: 0; /* Milligram dodaje margines pod przyciskami */
-    padding: 0 1rem;
-    height: 3rem;
-    line-height: 3rem;
-}
-
 .movie-card-description {
     font-size: 0.95rem;
     color: #333;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.movie-actions button {
+    margin-bottom: 0;
+    padding: 0 1rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    min-width: 90px;
 }

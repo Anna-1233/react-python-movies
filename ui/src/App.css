@@ -41,29 +41,96 @@ ul.movies-list {
   list-style: none;
 }
 
-/* Styl dla gwiazdki */
 .required-star {
     color: #e4631c;
     font-weight: bold;
     margin-left: 2px;
 }
 
-/* Styl dla tekstu legendy na dole */
 .form-legend {
     font-size: 1rem;
     color: #666;
     margin-top: 1rem;
-    /*font-style: italic;*/
 }
 
 .error-text {
     color: #e4631c;
-    font-size: 0.8rem;
+    font-size: 1rem;
     display: block;
-    margin-top: -1rem; /* Aby tekst był bliżej inputa */
+    margin-top: -1rem;
     margin-bottom: 1rem;
 }
 
-/*.input-error {*/
-/*    border-color: #e4631c !important;*/
-/*}*/
+.container {
+    max-width: 1800px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 20px;
+}
+
+.manager-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(1, 4, 18, 0.98);
+    padding: 15px 25px;
+    margin-bottom: 30px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.panel-brand {
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+
+.panel-actions button {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-left: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 160px;
+    height: 40px;
+}
+
+.panel-actions button:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.panel-actions button.active {
+    background: #9b4dca;
+    border-color: #9b4dca;
+}
+
+.content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 400px;
+}
+
+header {
+    background-color: #270355;
+    color: white;
+    padding: 1rem 0;
+}
+header h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+footer {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    padding: 2rem 0;
+    text-align: center;
+    font-size: 1.2rem;
+}

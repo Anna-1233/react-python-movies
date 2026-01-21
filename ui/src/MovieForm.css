@@ -1,0 +1,13 @@
+/* MovieForm.css */
+
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    min-width: 160px;
+    height: 40px;
+}

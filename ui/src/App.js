@@ -2,27 +2,45 @@ import './App.css';
 import {useEffect, useState} from "react";
 import "milligram";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faFilm, faUserGroup, faServer} from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import MovieForm from "./MovieForm";
 import MoviesList from "./MoviesList";
 
 function App() {
+    // State:
     const [movies, setMovies] = useState([]);
-    const [addingMovie, setAddingMovie] = useState(false);
+    const [currentView, setCurrentView] = useState('movies')
+    const [searchTerm, setSearchTerm] = useState("");
+    const [editingMovie, setEditingMovie] = useState(null);
 
+    // Funkcja otwierająca formularz w trybie edycji
+    const handleEditMovie = (movie) => {
+    setEditingMovie(movie);
+    setCurrentView('add-movie'); // Przełączamy na widok formularza
+};
+
+    // Get movie list
     useEffect(() => {
-        const fetchMovies = async () => {
-            const response = await fetch(`/movies`);
-            if (response.ok) {
-                const movies = await response.json();
-                setMovies(movies);
+        async function fetchMovies() {
+            try {
+                const response = await fetch('/movies');
+                if (response.ok) {
+                    const data = await response.json();
+                    setMovies(data);
+                } else {
+                    toast.error("Failed to load movies from server.");
+                }
+            } catch (e) {
+                toast.error("Connection error: Is the backend running?");
             }
-        };
+        }
         fetchMovies();
     }, []);
 
+    // Add movie
     async function handleAddMovie(movie) {
         try {
             const response = await fetch('/movies', {
@@ -36,10 +54,11 @@ function App() {
             if (response.ok) {
                 movie.id = data.id;
                 setMovies([...movies, movie]);
-                setAddingMovie(false);
                 toast.success(`Success: ${data.message}`);
+                setCurrentView('movies');
+
             } else {
-                // ROZBICIE BŁĘDÓW NA KONKRETNE KODY
+                // errors handling based on backend
                 switch (response.status) {
                     case 409: // Conflict
                         toast.warning(`Conflict: ${data.detail}`);
@@ -49,7 +68,38 @@ function App() {
                         break;
                     case 500: // Internal Server Error
                         toast.error("An unexpected server-side error occurred.", {
-                            autoClose: 10000, // Ten toast będzie wisiał dłużej, bo błąd jest poważny
+                        });
+                        break;
+                    default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Unexpected error."}`);
+                }
+            }
+        } catch (e) {
+            toast.error("Connection failed: Could not reach the server.");
+        }
+    }
+
+    // Delete movie
+    async function handleDelMovie(movie) {
+        try {
+            const url = `/movies/${movie.id}`
+            const response = await fetch(url, {
+            method: 'DELETE'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setMovies(movies.filter(m => m !== movie))
+                toast.success(`Success: ${data.message}`);
+            } else {
+                // errors handling based on backend
+                switch (response.status) {
+                    case 404: // Not found
+                        toast.error(`Error: ${data.detail}`);
+                        break;
+                    case 500: // Internal Server Error
+                        toast.error("An unexpected server-side error occurred.", {
                         });
                         break;
                     default:
@@ -57,37 +107,93 @@ function App() {
                 }
             }
         } catch (e) {
-            toast.error("Connection failed: Is your backend running?");
+            toast.error("Connection failed: Could not reach the server.");
         }
     }
 
-    async function handleDelMovie(movie) {
-        const url = `/movies/${movie.id}`
-        const response = await fetch(url, {
-            method: 'DELETE'
-        });
-        if (response.ok) {
-            setMovies(movies.filter(m => m !== movie))
-        }
-    }
+    // Filter
+    const filteredMovies = movies.filter(movie => {
+    const title = movie.title ? movie.title.toLowerCase() : "";
+    return title.includes(searchTerm.toLowerCase());
+});
 
     return (
-        <div className="container">
-            <h1>My favourite movies to watch</h1>
+        <div>
+            <header>
+                <h1>My favourite movies to watch</h1>
+            </header>
+            {/* --- PANEL MANAGER (NAVBAR) --- */}
+            <nav className="manager-panel">
+                <div className="panel-brand"><FontAwesomeIcon icon={faServer}/> Movie Manager</div>
 
-            {/* Ten komponent musi być tutaj raz – on zarządza wyświetlaniem toastów */}
-            <ToastContainer position="top-left" autoClose={5000} />
+                <div className="panel-actions">
+                    <button
+                        className={currentView === 'movies' ? "active" : ""}
+                        onClick={() => setCurrentView('movies')}>
+                        <FontAwesomeIcon icon={faFilm}/> Movies
+                    </button>
+                    <button
+                        className={currentView === 'add-movie' ? "active" : ""}
+                        onClick={() => setCurrentView('add-movie')}>
+                        <FontAwesomeIcon icon={faCirclePlus}/> Add Movie
+                    </button>
+                    <button
+                        className={currentView === 'actors' ? "active" : ""}
+                        onClick={() => setCurrentView('actors')}>
+                        <FontAwesomeIcon icon={faUserGroup}/> Actors
+                    </button>
+                    <button
+                        className={currentView === 'add-actor' ? "active" : ""}
+                        onClick={() => setCurrentView('add-actors')}>
+                        <FontAwesomeIcon icon={faCirclePlus}/> Add Actors
+                    </button>
+                </div>
 
-            {movies.length === 0
-                ? <p>No movies yet. Maybe add something?</p>
-                : <MoviesList movies={movies}
-                              onDeleteMovie={handleDelMovie}
-                />}
-            {addingMovie
-                ? <MovieForm onMovieSubmit={handleAddMovie}
-                             buttonLabel="Add a movie"
-                />
-                : <button onClick={() => setAddingMovie(true)}><FontAwesomeIcon icon={faCirclePlus} /> Go to add a movie</button>}
+                <div className="panel-search">
+                    <input
+                        type="text"
+                        placeholder="Search ..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}/>
+                </div>
+            </nav>
+
+            <div className="container">
+                {/* --- Toast managing --- */}
+                <ToastContainer position="top-left" autoClose={5000}/>
+
+
+                {/* --- MAIN PAGE (depends on currentView State) --- */}
+                <main className="content">
+                    {currentView === 'movies' && (
+                        <>
+                            {movies.length === 0 ? (
+                                <div className="empty-state">
+                                    <p>No movies yet. Maybe add something?</p>
+                                    <button onClick={() => setCurrentView('add-movie')}>Add your first movie!</button>
+                                </div>
+                            ) : (
+                                <MoviesList movies={filteredMovies}
+                                            onDeleteMovie={handleDelMovie}
+                                            onEditMovie={handleEditMovie}
+                                />
+                            )}
+                        </>
+                    )}
+
+                    {currentView === 'add-movie' && (
+                        <MovieForm
+                            onMovieSubmit={handleAddMovie}
+                            onCancel={() => setCurrentView('movies')}
+                            buttonLabel="Add new movie"
+                        />
+                    )}
+
+                </main>
+            </div>
+            <footer>
+                <p>&copy; My Movie Database. All rights reserved.</p>
+            </footer>
         </div>
     );
 }
