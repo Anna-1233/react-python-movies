@@ -22,6 +22,12 @@
 .movie-card-description {
     font-size: 0.95rem;
     color: #333;
+    display: -webkit-box;
+    max-width: 60%;
+    -webkit-line-clamp: 1; /* ilość lini */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .movie-actions {
@@ -37,3 +43,4 @@
     line-height: 2.5rem;
     min-width: 90px;
 }
+

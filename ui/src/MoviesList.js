@@ -10,6 +10,9 @@ export default function MoviesList(props) {
                 <MovieListItem movie={movie}
                                onDelete={() => props.onDeleteMovie(movie)}
                                onEdit={() => props.onEditMovie(movie)}
+                               onShowDetails={props.onShowDetails}
+                               isSelected={props.selectedIds.includes(movie.id)}
+                               onToggleSelect={() => props.onToggleSelect(movie.id)}
                 />
             </li>)}
         </ul>

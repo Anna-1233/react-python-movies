@@ -69,6 +69,15 @@ ul.movies-list {
     padding: 20px;
 }
 
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
 .manager-panel {
     display: flex;
     justify-content: space-between;
@@ -84,6 +93,9 @@ ul.movies-list {
 }
 
 .panel-brand {
+    flex: 0 0 15%;
+    text-align: left;
+    align-self: flex-start;
     font-size: 1.4rem;
     font-weight: bold;
     letter-spacing: 1px;
@@ -97,7 +109,7 @@ ul.movies-list {
     margin-left: 10px;
     cursor: pointer;
     transition: all 0.3s;
-    min-width: 160px;
+    min-width: 220px;
     height: 40px;
 }
 
@@ -109,6 +121,23 @@ ul.movies-list {
     background: #9b4dca;
     border-color: #9b4dca;
 }
+
+.panel-search {
+    flex: 0 0 20%;
+    align-self: flex-start;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.panel-search input {
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    width: 220%;
+}
+
 
 .content {
     background: white;
@@ -133,4 +162,47 @@ footer {
     padding: 2rem 0;
     text-align: center;
     font-size: 1.2rem;
+}
+
+@media screen and (max-width: 992px) {
+    .manager-panel {
+        flex-direction: column !important;
+        padding: 10px !important;
+        gap: 10px !important;
+    }
+
+    .panel-brand {
+        order: 1 !important;
+        margin-bottom: 5px !important;
+        font-size: 1.2rem !important;
+    }
+
+    .panel-actions {
+        order: 2 !important;
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px !important;
+        padding: 0 5px;
+    }
+
+    .panel-actions button {
+        width: 100% !important;
+        margin: 0 !important;
+        font-size: 0.75rem !important;
+        padding: 0 5px !important;
+        height: 35px !important;
+        min-width: 0 !important;
+    }
+
+    .panel-search {
+        order: 3 !important;
+        width: 100% !important;
+        margin-top: 5px;
+    }
+
+    .panel-search input {
+        width: 100% !important;
+        height: 35px !important;
+    }
 }

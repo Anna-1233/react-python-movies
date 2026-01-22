@@ -4,12 +4,29 @@ import './MovieListItem.css';
 
 
 export default function MovieListItem(props) {
+    // const description = props.movie.description || "";
+    // const shortDescription = description.length > 50
+    //     ? description.substring(0, 50) + "..."
+    //     : description;
+
     return (
         <div className="movie-card">
             <div className="movie-card-header">
                 {/*: Left group: movies details */}
                 <div className="movie-details">
-                    <strong>{props.movie.title}</strong>
+                    <input
+                        type="checkbox"
+                        checked={props.isSelected}
+                        onChange={props.onToggleSelect}
+
+                    />
+                    {' '}
+                    <strong
+                        className="clickable-title"
+                        onClick={() => props.onShowDetails(props.movie.id)}
+                    >
+                        {props.movie.title}
+                    </strong>
                     {' '}
                     <span>({props.movie.year})</span>
                     {' '}
