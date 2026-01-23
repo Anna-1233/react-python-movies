@@ -1,5 +1,5 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClapperboard } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faClapperboard} from '@fortawesome/free-solid-svg-icons';
 import MovieListItem from "./MovieListItem";
 
 export default function MoviesList(props) {

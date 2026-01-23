@@ -2,13 +2,15 @@ import './App.css';
 import {useEffect, useState} from "react";
 import "milligram";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCirclePlus, faFilm, faUserGroup, faServer, faTrashCan} from '@fortawesome/free-solid-svg-icons';
+import {faCirclePlus, faFilm, faUserGroup, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import MovieForm from "./MovieForm";
 import MoviesList from "./MoviesList";
 import MovieDetails from "./MovieDetails";
+
+import ActorsList from "./ActorsList";
 
 function App() {
     // State:
@@ -56,7 +58,7 @@ function App() {
                 movie.id = data.id;
                 setMovies([...movies, movie]);
                 toast.success(`Success: ${data.message}`);
-                setCurrentView('movies');
+                setCurrentView('movies'); // back to list
 
             } else {
                 // errors handling based on backend
@@ -79,9 +81,10 @@ function App() {
         }
     }
 
+    // for handleUpdateMovie to save current movie in setEditingMovie state
     function prepareEdit(movie) {
-        setEditingMovie(movie);       // Zapisujemy film w pamięci
-        setCurrentView('add-movie');  // Przełączamy widok na formularz
+        setEditingMovie(movie);
+        setCurrentView('add-movie');  // switch to MovieForm
     }
 
     // edit movie
@@ -93,20 +96,37 @@ function App() {
                 body: JSON.stringify({...movie, id: editingMovie.id})
             });
 
+            const data = await response.json();
+
             if (response.ok) {
                 const updatedMovie = {...movie, id: editingMovie.id};
 
                 setMovies(movies.map(m => m.id === editingMovie.id ? updatedMovie : m));
                 toast.success("Movie updated!");
-                setEditingMovie(null); // Czyścimy stan
-                setCurrentView('movies'); // Wracamy do listy
+                setEditingMovie(null); // clear setEditingMovie state
+                setCurrentView('movies'); // back to list
+            } else {
+                // errors handling based on backend
+                switch (response.status) {
+                    case 409: // Conflict
+                        toast.warning(`Conflict: ${data.detail}`);
+                        break;
+                    case 400: // Bad Request
+                        toast.error(`Invalid data: ${data.detail}`);
+                        break;
+                    case 500: // Internal Server Error
+                        toast.error("An unexpected server-side error occurred.", {});
+                        break;
+                    default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Unexpected error."}`);
+                }
             }
         } catch (e) {
             toast.error("Error updating movie");
         }
     }
 
-    // Delete movie
+    // delete movie
     async function handleDelMovie(movie) {
         try {
             const url = `/movies/${movie.id}`
@@ -137,12 +157,14 @@ function App() {
         }
     }
 
+    // get specific movie
     function handleShowDetails(id) {
         setSelectedMovieId(id);
         setCurrentView('movie-details');
 
     }
 
+    // for deleteSelectedMovies to save selected ids
     function toggleMovieSelection(movieId) {
         setSelectedMovieIds(prev =>
             prev.includes(movieId)
@@ -151,6 +173,7 @@ function App() {
         );
     }
 
+    // del selected movies
     async function deleteSelectedMovies() {
         if (selectedMovieIds.length === 0) return;
 
@@ -175,10 +198,17 @@ function App() {
                     setSelectedMovieIds([]);
                     toast.success(`Success: ${data.message}`);
                 } else {
-                    toast.error(data.detail || "Error during batch delete");
+                    // errors handling based on backend
+                    switch (response.status) {
+                        case 500: // Internal Server Error
+                            toast.error("An unexpected server-side error occurred.", {});
+                        break;
+                        default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Error during batch delete."}`);
+                    }
                 }
             } catch (e) {
-                toast.error("Connection error. Could not delete movies.");
+                toast.error("Connection failed: Could not delete movies.");
             }
         }
     }
@@ -267,7 +297,6 @@ function App() {
                 {/* --- Toast managing --- */}
                 <ToastContainer position="top-left" autoClose={5000}/>
 
-
                 {/* --- MAIN PAGE (depends on currentView State) --- */}
                 <main className="content">
                     {currentView === 'movies' && (
@@ -313,20 +342,22 @@ function App() {
                     )}
 
                     {currentView === 'actors' && (
-                        <div className="actors-section">
-                            <h2>Actors List</h2>
+                        <>
                             {actors.length === 0 ? (
-                                <p>No actors found.</p>
+                                <div className="empty-state">
+                                    <p>No actors yet. Maybe add someone?</p>
+                                    <button onClick={() => setCurrentView('add-actor')}>Add first actor!</button>
+                                </div>
                             ) : (
-                                <ul className="actors-list">
-                                    {actors.map(actor => (
-                                        <li key={actor.id} className="actor-item">
-                                            <strong>{actor.name} {actor.surname}</strong>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <ActorsList actors={actors}
+                                            // onDeleteMovie={handleDelMovie}
+                                            // onEditMovie={prepareEdit}
+                                            // onShowDetails={handleShowDetails}
+                                            // selectedIds={selectedMovieIds}
+                                            // onToggleSelect={toggleMovieSelection}
+                                />
                             )}
-                        </div>
+                        </>
                     )}
 
                 </main>

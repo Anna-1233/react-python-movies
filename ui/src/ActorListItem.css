@@ -1,0 +1,16 @@
+.actor-card {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    align-items: baseline;
+}
+
+.actor-actions {
+    display: flex;
+    gap: 10px;
+    font-size: 1.2rem;
+}
+
+.actor-actions a:hover {
+    text-decoration: underline;
+}

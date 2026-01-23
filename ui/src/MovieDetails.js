@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowLeft, faUser, faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {toast} from 'react-toastify';
 
 export default function MovieDetails({movieId, onBack}) {
     const [movie, setMovie] = useState(null);
@@ -19,12 +20,13 @@ export default function MovieDetails({movieId, onBack}) {
                 if (movieRes.ok && actorsRes.ok) {
                     const movie = await movieRes.json();
                     const actors = await actorsRes.json();
-
                     setMovie(movie);
                     setActors(actors.actors);
+                } else {
+                    toast.error("Failed to load movie detail from server.");
                 }
             } catch (e) {
-                console.error("Błąd podczas pobierania danych:", e);
+                toast.error("Connection failed: Could not reach the server.");
             } finally {
                 setLoading(false);
             }
@@ -35,7 +37,7 @@ export default function MovieDetails({movieId, onBack}) {
     if (loading) {
         return (
             <div className="empty-state">
-                <FontAwesomeIcon icon={faSpinner} spin size="2x" />
+                <FontAwesomeIcon icon={faSpinner} spin size="2x"/>
                 <p>Loading movie data...</p>
             </div>
         );
@@ -44,7 +46,7 @@ export default function MovieDetails({movieId, onBack}) {
     return (
         <div className="movie-details-view">
             <button className="button button-outline" onClick={onBack}>
-                <FontAwesomeIcon icon={faArrowLeft} /> Back to list
+                <FontAwesomeIcon icon={faArrowLeft}/> Back to list
             </button>
 
             <div className="details-card">
@@ -62,7 +64,7 @@ export default function MovieDetails({movieId, onBack}) {
                         <div className="actors-grid">
                             {actors.map(actor => (
                                 <span key={actor.id}>
-                                    <FontAwesomeIcon icon={faUser} /> {actor.name} {actor.surname}
+                                    <FontAwesomeIcon icon={faUser}/> {actor.name} {actor.surname}
                                 </span>
                             ))}
                         </div>
