@@ -568,7 +568,7 @@ function App() {
                             onActorSubmit={editingActor ? handleUpdateActor : handleAddActor}
                             onCancel={() => {
                                 setCurrentView('actors');
-                                setEditingMovie(null);
+                                setEditingActor(null);
                             }}
                             buttonLabel={editingActor ? "Save changes" : "Add actor"}
                         />
