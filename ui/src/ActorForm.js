@@ -84,7 +84,7 @@ export default function ActorForm(props) {
             {/* submit button to send data to server / label add or edit depend on endpoint */}
             <button>{props.buttonLabel || 'Submit'}</button>
 
-            {/* cancel button to go back to movies list */}
+            {/* cancel button to go back to actor list */}
             <button type="button" className="button-outline" onClick={props.onCancel}>Cancel</button>
         </div>
     </form>;

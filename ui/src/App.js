@@ -26,7 +26,6 @@ function App() {
 
     const [actors, setActors] = useState([]);
     const [editingActor, setEditingActor] = useState(null);
-    const [selectedActorId, setSelectedActorId] = useState(null);
     const [selectedActorIds, setSelectedActorIds] = useState([]);
 
 
@@ -135,32 +134,35 @@ function App() {
 
     // delete movie
     async function handleDelMovie(movie) {
-        try {
-            const url = `/movies/${movie.id}`
-            const response = await fetch(url, {
-                method: 'DELETE'
-            });
+        const confirmMessage = `Are you sure you want to delete a movie?`;
+        if (window.confirm(confirmMessage)) {
+            try {
+                const url = `/movies/${movie.id}`
+                const response = await fetch(url, {
+                    method: 'DELETE'
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (response.ok) {
-                setMovies(movies.filter(m => m !== movie))
-                toast.success(`Success: ${data.message}`);
-            } else {
-                // errors handling based on backend
-                switch (response.status) {
-                    case 404: // Not found
-                        toast.error(`Error: ${data.detail}`);
-                        break;
-                    case 500: // Internal Server Error
-                        toast.error("An unexpected server-side error occurred.", {});
-                        break;
-                    default:
-                        toast.error(`Error ${response.status}: ${data.detail || "Unexpected error"}`);
+                if (response.ok) {
+                    setMovies(movies.filter(m => m !== movie))
+                    toast.success(`Success: ${data.message}`);
+                } else {
+                    // errors handling based on backend
+                    switch (response.status) {
+                        case 404: // Not found
+                            toast.error(`Error: ${data.detail}`);
+                            break;
+                        case 500: // Internal Server Error
+                            toast.error("An unexpected server-side error occurred.", {});
+                            break;
+                        default:
+                            toast.error(`Error ${response.status}: ${data.detail || "Unexpected error"}`);
+                    }
                 }
+            } catch (e) {
+                toast.error("Connection failed: Could not reach the server.");
             }
-        } catch (e) {
-            toast.error("Connection failed: Could not reach the server.");
         }
     }
 
@@ -220,7 +222,7 @@ function App() {
         }
     }
 
-    // Filter
+    // Filter movies
     const filteredMovies = movies.filter(movie => {
         const title = movie.title ? movie.title.toLowerCase() : "";
         return title.includes(searchTerm.toLowerCase());
@@ -287,7 +289,7 @@ function App() {
     // for handleUpdateActor to save current actor in setEditingActor state
     function prepareEditActor(actor) {
         setEditingActor(actor);
-        setCurrentView('add-actor');  // switch to MovieForm
+        setCurrentView('add-actor');  // switch to ActorForm
     }
 
     // edit actor
@@ -330,6 +332,95 @@ function App() {
         }
     }
 
+    // delete actor
+    async function handleDelActor(actor) {
+        const confirmMessage = "Are you sure you want to delete an actor?";
+        if (window.confirm(confirmMessage)) {
+            try {
+                const url = `/actors/${actor.id}`
+                const response = await fetch(url, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setActors(actors.filter(m => m !== actor))
+                    toast.success(`Success: ${data.message}`);
+                } else {
+                    // errors handling based on backend
+                    switch (response.status) {
+                        case 404: // Not found
+                            toast.error(`Error: ${data.detail}`);
+                            break;
+                        case 500: // Internal Server Error
+                            toast.error("An unexpected server-side error occurred.", {});
+                            break;
+                        default:
+                            toast.error(`Error ${response.status}: ${data.detail || "Unexpected error"}`);
+                    }
+                }
+            } catch (e) {
+                toast.error("Connection failed: Could not reach the server.");
+            }
+        }
+    }
+
+    // for deleteSelectedActors to save selected ids
+    function toggleActorSelection(actorId) {
+        setSelectedActorIds(prev =>
+            prev.includes(actorId)
+                ? prev.filter(id => id !== actorId)
+                : [...prev, actorId]
+        );
+    }
+
+    // del selected actors
+    async function deleteSelectedActors() {
+        if (selectedActorIds.length === 0) return;
+
+        const confirmMessage = `Are you sure you want to delete ${selectedActorIds.length} actor(s)?`;
+        if (window.confirm(confirmMessage)) {
+            try {
+                const response = await fetch('/actors/batch', {
+                    method: 'DELETE',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(selectedActorIds)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const deletedIds = data.deleted_ids || selectedActorIds;
+
+                    setActors(prevActors =>
+                        prevActors.filter(actor => !deletedIds.includes(actor.id))
+                    );
+
+                    setSelectedActorIds([]);
+                    toast.success(`Success: ${data.message}`);
+                } else {
+                    // errors handling based on backend
+                    switch (response.status) {
+                        case 500: // Internal Server Error
+                            toast.error("An unexpected server-side error occurred.", {});
+                        break;
+                        default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Error during batch delete."}`);
+                    }
+                }
+            } catch (e) {
+                toast.error("Connection failed: Could not delete movies.");
+            }
+        }
+    }
+
+    // Filter actors
+    const filteredActors = actors.filter(actor => {
+        const fullName = `${actor.name} ${actor.surname}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase());
+    });
+
 
     return (
         <div>
@@ -365,9 +456,10 @@ function App() {
                     </button>
                     <button
                         className="button-delete-all"
-                        onClick={deleteSelectedMovies}
-                        disabled={selectedMovieIds.length === 0}>
-                        <FontAwesomeIcon icon={faTrashCan}/> Delete Selected ({selectedMovieIds.length})
+                        onClick={currentView === 'actors' ? deleteSelectedActors : deleteSelectedMovies}
+                        disabled={currentView === 'actors' ? selectedActorIds.length === 0 : selectedMovieIds.length === 0}>
+                        <FontAwesomeIcon icon={faTrashCan}/>
+                        Delete Selected ({currentView === 'actors' ? selectedActorIds.length : selectedMovieIds.length})
                     </button>
                 </div>
 
@@ -382,7 +474,7 @@ function App() {
 
             <div className="container">
                 {/* --- Toast managing --- */}
-                <ToastContainer position="top-left" autoClose={5000}/>
+                <ToastContainer position="top-left" autoClose={3000}/>
 
                 {/* --- MAIN PAGE (depends on currentView State) --- */}
                 <main className="content">
@@ -436,12 +528,12 @@ function App() {
                                     <button onClick={() => setCurrentView('add-actor')}>Add first actor!</button>
                                 </div>
                             ) : (
-                                <ActorsList actors={actors}
-                                            // onDeleteMovie={handleDelMovie}
+                                <ActorsList actors={filteredActors}
+                                            onDeleteActor={handleDelActor}
                                             onEditActor={prepareEditActor}
                                             // onShowDetails={handleShowDetails}
-                                            // selectedIds={selectedMovieIds}
-                                            // onToggleSelect={toggleMovieSelection}
+                                            selectedIds={selectedActorIds}
+                                            onToggleSelect={toggleActorSelection}
                                 />
                             )}
                         </>

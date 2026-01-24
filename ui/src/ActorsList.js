@@ -11,11 +11,11 @@ export default function ActorsList(props) {
         <div className="actors-list">
             {sortedActors.map(actor => <ul key={actor.id}>
                 <ActorListItem actor={actor}
-                               // onDelete={() => props.onDeleteMovie(actor)}
+                               onDelete={() => props.onDeleteActor(actor)}
                                onEdit={() => props.onEditActor(actor)}
                                // onShowDetails={props.onShowDetails}
-                               // isSelected={props.selectedIds.includes(actor.id)}
-                               // onToggleSelect={() => props.onToggleSelect(actor.id)}
+                               isSelected={props.selectedIds.includes(actor.id)}
+                               onToggleSelect={() => props.onToggleSelect(actor.id)}
                 />
             </ul>)}
         </div>
