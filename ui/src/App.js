@@ -501,6 +501,7 @@ function App() {
                         <MovieForm
                             key={editingMovie ? editingMovie.id : 'new'}
                             initialData={editingMovie}
+                            allActors={actors}
                             onMovieSubmit={editingMovie ? handleUpdateMovie : handleAddMovie}
                             onCancel={() => {
                                 setCurrentView('movies');

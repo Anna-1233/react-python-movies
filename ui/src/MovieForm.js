@@ -8,6 +8,7 @@ export default function MovieForm(props) {
     const [director, setDirector] = useState(props.initialData?.director || '');
     const [description, setDescription] = useState(props.initialData?.description || '');
     const [errors, setErrors] = useState({});
+    const [selectedActorIds, setSelectedActorIds] = useState(props.initialData?.actor_ids || []);
 
     const handleTitleChange = (event) => {
         const val = event.target.value;
@@ -66,6 +67,14 @@ export default function MovieForm(props) {
         }
     };
 
+    const handleActorToggle = (actorId) => {
+        setSelectedActorIds(prev =>
+            prev.includes(actorId)
+                ? prev.filter(id => id !== actorId)
+                : [...prev, actorId]
+        );
+    };
+
     function addMovie(event) {
         event.preventDefault();
 
@@ -89,11 +98,12 @@ export default function MovieForm(props) {
         }
 
         // all ok
-        props.onMovieSubmit({title, year, director, description});
+        props.onMovieSubmit({title, year, director, description, actor_ids: selectedActorIds});
         setTitle('');
         setYear('');
         setDirector('');
         setDescription('');
+        setSelectedActorIds('');
         setErrors({});
     }
 
@@ -118,6 +128,21 @@ export default function MovieForm(props) {
         <div>
             <label>Description</label>
             <textarea value={description} onChange={(event) => setDescription(event.target.value)}/>
+        </div>
+        <div>
+            <label>Cast (Select actors)</label>
+            <div className="actors-selection-list">
+                {props.allActors.map(actor => (
+                    <label key={actor.id} className="actor-checkbox-label">
+                        <input
+                            type="checkbox"
+                            checked={selectedActorIds.includes(actor.id)}
+                            onChange={() => handleActorToggle(actor.id)}
+                        />
+                        {actor.name} <strong>{actor.surname}</strong>
+                    </label>
+                ))}
+            </div>
         </div>
         <p className="form-legend"><span className="required-star">*</span> Fields are required</p>
         <div className="form-actions">
