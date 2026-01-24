@@ -10,21 +10,27 @@ import MovieForm from "./MovieForm";
 import MoviesList from "./MoviesList";
 import MovieDetails from "./MovieDetails";
 
+import ActorForm from "./ActorForm";
 import ActorsList from "./ActorsList";
 
+
 function App() {
-    // State:
-    const [movies, setMovies] = useState([]);
+    // States:
     const [currentView, setCurrentView] = useState('movies')
     const [searchTerm, setSearchTerm] = useState("");
+
+    const [movies, setMovies] = useState([]);
     const [editingMovie, setEditingMovie] = useState(null);
     const [selectedMovieId, setSelectedMovieId] = useState(null);
     const [selectedMovieIds, setSelectedMovieIds] = useState([]);
 
     const [actors, setActors] = useState([]);
+    const [editingActor, setEditingActor] = useState(null);
+    const [selectedActorId, setSelectedActorId] = useState(null);
+    const [selectedActorIds, setSelectedActorIds] = useState([]);
 
 
-    // Get movie list
+    // Get movies list
     useEffect(() => {
         async function fetchMovies() {
             try {
@@ -99,6 +105,7 @@ function App() {
             const data = await response.json();
 
             if (response.ok) {
+
                 const updatedMovie = {...movie, id: editingMovie.id};
 
                 setMovies(movies.map(m => m.id === editingMovie.id ? updatedMovie : m));
@@ -122,7 +129,7 @@ function App() {
                 }
             }
         } catch (e) {
-            toast.error("Error updating movie");
+            toast.error("Error updating movie.");
         }
     }
 
@@ -219,7 +226,8 @@ function App() {
         return title.includes(searchTerm.toLowerCase());
     });
 
-    // get actors
+    // ------------------ Actors ---------------------
+    // get actors list
     useEffect(() => {
         async function fetchActors() {
             try {
@@ -238,6 +246,90 @@ function App() {
         fetchActors();
     }, []);
 
+    // Add actor
+    async function handleAddActor(actor) {
+        try {
+            const response = await fetch('/actors', {
+                method: 'POST',
+                body: JSON.stringify(actor),
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                actor.id = data.id;
+                setActors([...actors, actor]);
+                toast.success(`Success: ${data.message}`);
+                setCurrentView('actors'); // back to actors list
+
+            } else {
+                // errors handling based on backend
+                switch (response.status) {
+                    case 409: // Conflict
+                        toast.warning(`Conflict: ${data.detail}`);
+                        break;
+                    case 400: // Bad Request
+                        toast.error(`Invalid data: ${data.detail}`);
+                        break;
+                    case 500: // Internal Server Error
+                        toast.error("An unexpected server-side error occurred.", {});
+                        break;
+                    default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Unexpected error."}`);
+                }
+            }
+        } catch (e) {
+            toast.error("Connection failed: Could not reach the server.");
+        }
+    }
+
+    // for handleUpdateActor to save current actor in setEditingActor state
+    function prepareEditActor(actor) {
+        setEditingActor(actor);
+        setCurrentView('add-actor');  // switch to MovieForm
+    }
+
+    // edit actor
+    async function handleUpdateActor(actor) {
+        try {
+            const response = await fetch(`/actors/${editingActor.id}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({...actor, id: editingActor.id})
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+
+                const updatedActor = {...actor, id: editingActor.id};
+
+                setActors(actors.map(m => m.id === editingActor.id ? updatedActor : m));
+                toast.success("Actor updated!");
+                setEditingActor(null); // clear setEditingActor state
+                setCurrentView('actors'); // back to actors list
+            } else {
+                // errors handling based on backend
+                switch (response.status) {
+                    case 409: // Conflict
+                        toast.warning(`Conflict: ${data.detail}`);
+                        break;
+                    case 400: // Bad Request
+                        toast.error(`Invalid data: ${data.detail}`);
+                        break;
+                    case 500: // Internal Server Error
+                        toast.error("An unexpected server-side error occurred.", {});
+                        break;
+                    default:
+                        toast.error(`Error ${response.status}: ${data.detail || "Unexpected error."}`);
+                }
+            }
+        } catch (e) {
+            toast.error("Error updating actor.");
+        }
+    }
+
 
     return (
         <div>
@@ -248,12 +340,7 @@ function App() {
             <nav className="manager-panel">
                 <div className="panel-brand">
                     <img src="/favicon.ico" alt="logo" style={{ width: '15px', marginRight: '10px' }} />
-                    {/*<FontAwesomeIcon icon={faServer}/>*/}
                     My Movies Manager
-                    {/*<div><img src="/favicon.ico" alt="logo" style={{ width: '15px', marginRight: '10px' }} /></div>*/}
-                    {/*<div>*/}
-                    {/*    {new Date().toLocaleDateString('pl-PL')}*/}
-                    {/*</div>*/}
                 </div>
                 <div className="panel-actions">
                     <button
@@ -351,13 +438,26 @@ function App() {
                             ) : (
                                 <ActorsList actors={actors}
                                             // onDeleteMovie={handleDelMovie}
-                                            // onEditMovie={prepareEdit}
+                                            onEditActor={prepareEditActor}
                                             // onShowDetails={handleShowDetails}
                                             // selectedIds={selectedMovieIds}
                                             // onToggleSelect={toggleMovieSelection}
                                 />
                             )}
                         </>
+                    )}
+
+                    {currentView === 'add-actor' && (
+                        <ActorForm
+                            key={editingActor ? editingActor.id : 'new'}
+                            initialData={editingActor}
+                            onActorSubmit={editingActor ? handleUpdateActor : handleAddActor}
+                            onCancel={() => {
+                                setCurrentView('actors');
+                                setEditingMovie(null);
+                            }}
+                            buttonLabel={editingActor ? "Save changes" : "Add actor"}
+                        />
                     )}
 
                 </main>

@@ -12,7 +12,7 @@ export default function ActorsList(props) {
             {sortedActors.map(actor => <ul key={actor.id}>
                 <ActorListItem actor={actor}
                                // onDelete={() => props.onDeleteMovie(actor)}
-                               // onEdit={() => props.onEditMovie(actor)}
+                               onEdit={() => props.onEditActor(actor)}
                                // onShowDetails={props.onShowDetails}
                                // isSelected={props.selectedIds.includes(actor.id)}
                                // onToggleSelect={() => props.onToggleSelect(actor.id)}
