@@ -86,10 +86,31 @@ function App() {
         }
     }
 
-    // for handleUpdateMovie to save current movie in setEditingMovie state
-    function prepareEdit(movie) {
-        setEditingMovie(movie);
-        setCurrentView('add-movie');  // switch to MovieForm
+    // for handleUpdateMovie to save current movie in setEditingMovie state incl. actors
+    async function prepareEdit(movie) {
+        try {
+            const [movieRes, actorsRes] = await Promise.all([
+                fetch(`/movies/${movie.id}`),
+                fetch(`/movies/${movie.id}/actors`)
+            ]);
+
+            if (movieRes.ok && actorsRes.ok) {
+                const movieData = await movieRes.json();
+                const actorsData = await actorsRes.json();
+
+                const fullMovieToEdit = {
+                    ...movieData,
+                    actor_ids: actorsData.actors.map(a => a.id)
+                };
+
+                setEditingMovie(fullMovieToEdit);
+                setCurrentView('add-movie');
+            } else {
+                toast.error("Failed to load full movie data for editing.");
+            }
+        } catch (e) {
+            toast.error("Connection failed: Could not reach the server.");
+        }
     }
 
     // edit movie

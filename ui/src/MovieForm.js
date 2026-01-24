@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {toast} from "react-toastify";
 import './MovieForm.css';
 
@@ -9,6 +9,16 @@ export default function MovieForm(props) {
     const [description, setDescription] = useState(props.initialData?.description || '');
     const [errors, setErrors] = useState({});
     const [selectedActorIds, setSelectedActorIds] = useState(props.initialData?.actor_ids || []);
+
+    useEffect(() => {
+        if (props.initialData) {
+            setTitle(props.initialData.title || '');
+            setYear(props.initialData.year || '');
+            setDirector(props.initialData.director || '');
+            setDescription(props.initialData.description || '');
+            setSelectedActorIds(props.initialData.actor_ids || []);
+        }
+    }, [props.initialData]);
 
     const handleTitleChange = (event) => {
         const val = event.target.value;
@@ -99,13 +109,25 @@ export default function MovieForm(props) {
 
         // all ok
         props.onMovieSubmit({title, year, director, description, actor_ids: selectedActorIds});
-        setTitle('');
-        setYear('');
-        setDirector('');
-        setDescription('');
-        setSelectedActorIds('');
-        setErrors({});
+        if (!props.initialData) {
+            setTitle('');
+            setYear('');
+            setDirector('');
+            setDescription('');
+            setSelectedActorIds([]);
+            setErrors({});
+        }
     }
+
+    const sortedActors = [...props.allActors].sort((a, b) => {
+        const isASelected = selectedActorIds.includes(a.id);
+        const isBSelected = selectedActorIds.includes(b.id);
+
+        if (isASelected === isBSelected) {
+            return a.surname.localeCompare(b.surname);
+        }
+        return isASelected ? -1 : 1;
+    });
 
     return <form onSubmit={addMovie}>
         <h2>{props.initialData ? "Edit movie" : "Add movie"}</h2>
@@ -132,7 +154,7 @@ export default function MovieForm(props) {
         <div>
             <label>Cast (Select actors)</label>
             <div className="actors-selection-list">
-                {props.allActors.map(actor => (
+                {sortedActors.map(actor => (
                     <label key={actor.id} className="actor-checkbox-label">
                         <input
                             type="checkbox"

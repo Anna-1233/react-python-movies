@@ -33,7 +33,7 @@ export default function ActorForm(props) {
         } else  {
             // ok
             setErrors(prev => {
-                const {year, ...rest} = prev;
+                const {surname, ...rest} = prev;
                 return rest;
             });
         }
