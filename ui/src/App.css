@@ -146,6 +146,10 @@ ul.movies-list {
     min-height: 400px;
 }
 
+.no-results {
+    color: #9b4dca;
+}
+
 header {
     background-color: #270355;
     color: white;

@@ -457,7 +457,10 @@ function App() {
                 <div className="panel-actions">
                     <button
                         className={currentView === 'movies' ? "active" : ""}
-                        onClick={() => setCurrentView('movies')}>
+                        onClick={() => {
+                            setSearchTerm("");
+                            setCurrentView('movies');
+                        }}>
                         <FontAwesomeIcon icon={faFilm}/> Movies
                     </button>
                     <button
@@ -467,7 +470,10 @@ function App() {
                     </button>
                     <button
                         className={currentView === 'actors' ? "active" : ""}
-                        onClick={() => setCurrentView('actors')}>
+                        onClick={() => {
+                            setSearchTerm("");
+                            setCurrentView('actors');
+                        }}>
                         <FontAwesomeIcon icon={faUserGroup}/> Actors
                     </button>
                     <button
@@ -507,13 +513,20 @@ function App() {
                                     <button onClick={() => setCurrentView('add-movie')}>Add your first movie!</button>
                                 </div>
                             ) : (
-                                <MoviesList movies={filteredMovies}
-                                            onDeleteMovie={handleDelMovie}
-                                            onEditMovie={prepareEdit}
-                                            onShowDetails={handleShowDetails}
-                                            selectedIds={selectedMovieIds}
-                                            onToggleSelect={toggleMovieSelection}
-                                />
+                                <>
+                                    <MoviesList movies={filteredMovies}
+                                                onDeleteMovie={handleDelMovie}
+                                                onEditMovie={prepareEdit}
+                                                onShowDetails={handleShowDetails}
+                                                selectedIds={selectedMovieIds}
+                                                onToggleSelect={toggleMovieSelection}
+                                    />
+                                    {filteredMovies.length === 0 && searchTerm !== "" && (
+                                        <div className="no-results">
+                                            <p>No movies found matching: {searchTerm}</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}
@@ -550,13 +563,20 @@ function App() {
                                     <button onClick={() => setCurrentView('add-actor')}>Add first actor!</button>
                                 </div>
                             ) : (
-                                <ActorsList actors={filteredActors}
-                                            onDeleteActor={handleDelActor}
-                                            onEditActor={prepareEditActor}
-                                            // onShowDetails={handleShowDetails}
-                                            selectedIds={selectedActorIds}
-                                            onToggleSelect={toggleActorSelection}
-                                />
+                                <>
+                                    <ActorsList actors={filteredActors}
+                                                onDeleteActor={handleDelActor}
+                                                onEditActor={prepareEditActor}
+                                        // onShowDetails={handleShowDetails}
+                                                selectedIds={selectedActorIds}
+                                                onToggleSelect={toggleActorSelection}
+                                    />
+                                    {filteredActors.length === 0 && searchTerm !== "" && (
+                                        <div className="no-results">
+                                            <p>No actors found matching: {searchTerm}</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}
