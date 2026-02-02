@@ -1,8 +1,6 @@
 import './App.css';
 import {useEffect, useState} from "react";
 import "milligram";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCirclePlus, faFilm, faUserGroup, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,6 +10,8 @@ import MovieDetails from "./MovieDetails";
 
 import ActorForm from "./ActorForm";
 import ActorsList from "./ActorsList";
+
+import Navbar from "./Navbar";
 
 
 function App() {
@@ -449,55 +449,15 @@ function App() {
                 <h1>My favourite movies to watch</h1>
             </header>
             {/* --- PANEL MANAGER (NAVBAR) --- */}
-            <nav className="manager-panel">
-                <div className="panel-brand">
-                    <img src="/favicon.ico" alt="logo" style={{ width: '15px', marginRight: '10px' }} />
-                    My Movies Manager
-                </div>
-                <div className="panel-actions">
-                    <button
-                        className={currentView === 'movies' ? "active" : ""}
-                        onClick={() => {
-                            setSearchTerm("");
-                            setCurrentView('movies');
-                        }}>
-                        <FontAwesomeIcon icon={faFilm}/> Movies
-                    </button>
-                    <button
-                        className={currentView === 'add-movie' ? "active" : ""}
-                        onClick={() => setCurrentView('add-movie')}>
-                        <FontAwesomeIcon icon={faCirclePlus}/> Add Movie
-                    </button>
-                    <button
-                        className={currentView === 'actors' ? "active" : ""}
-                        onClick={() => {
-                            setSearchTerm("");
-                            setCurrentView('actors');
-                        }}>
-                        <FontAwesomeIcon icon={faUserGroup}/> Actors
-                    </button>
-                    <button
-                        className={currentView === 'add-actor' ? "active" : ""}
-                        onClick={() => setCurrentView('add-actor')}>
-                        <FontAwesomeIcon icon={faCirclePlus}/> Add Actors
-                    </button>
-                    <button
-                        className="button-delete-all"
-                        onClick={currentView === 'actors' ? deleteSelectedActors : deleteSelectedMovies}
-                        disabled={currentView === 'actors' ? selectedActorIds.length === 0 : selectedMovieIds.length === 0}>
-                        <FontAwesomeIcon icon={faTrashCan}/>
-                        Delete Selected ({currentView === 'actors' ? selectedActorIds.length : selectedMovieIds.length})
-                    </button>
-                </div>
-
-                <div className="panel-search">
-                    <input
-                        type="text"
-                        placeholder="Search ..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}/>
-                </div>
-            </nav>
+            <Navbar
+                currentView={currentView}
+                setCurrentView={setCurrentView}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                selectedMovieIds={selectedMovieIds}
+                selectedActorIds={selectedActorIds}
+                deleteSelectedMovies={deleteSelectedMovies}
+                deleteSelectedActors={deleteSelectedActors}/>
 
             <div className="container">
                 {/* --- Toast managing --- */}
