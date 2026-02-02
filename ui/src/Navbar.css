@@ -58,6 +58,10 @@
     justify-content: flex-end;
 }
 
+.panel-search input {
+    color: white;
+}
+
 
 @media screen and (max-width: 992px) {
     .manager-panel {
@@ -94,6 +98,10 @@
         order: 3 !important;
         width: 100% !important;
         margin-top: 5px;
+    }
+
+    .panel-search input {
+        color: white;
     }
 
 }
