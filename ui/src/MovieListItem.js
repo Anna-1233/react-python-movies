@@ -4,10 +4,6 @@ import './MovieListItem.css';
 
 
 export default function MovieListItem(props) {
-    // const description = props.movie.description || "";
-    // const shortDescription = description.length > 50
-    //     ? description.substring(0, 50) + "..."
-    //     : description;
 
     return (
         <div className="movie-card">

@@ -13,4 +13,5 @@
 
 .actor-actions a:hover {
     text-decoration: underline;
+    cursor: pointer;
 }

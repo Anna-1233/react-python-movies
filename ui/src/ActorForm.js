@@ -81,7 +81,7 @@ export default function ActorForm(props) {
         </div>
         <p className="form-legend"><span className="required-star">*</span> Fields are required</p>
         <div className="form-actions">
-            {/* submit button to send data to server / label add or edit depend on endpoint */}
+            {/* submit button to send data to server / label add or edit depends on endpoint */}
             <button>{props.buttonLabel || 'Submit'}</button>
 
             {/* cancel button to go back to actor list */}
