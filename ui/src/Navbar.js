@@ -56,8 +56,7 @@ export default function Navbar({
                     className="button-delete-all"
                     onClick={currentView === 'actors' ? deleteSelectedActors : deleteSelectedMovies}
                     disabled={currentView === 'actors' ? selectedActorIds.length === 0 : selectedMovieIds.length === 0}>
-                    <FontAwesomeIcon icon={faTrashCan}/>
-                    Delete Selected ({currentView === 'actors' ? selectedActorIds.length : selectedMovieIds.length})
+                    <FontAwesomeIcon icon={faTrashCan}/> Delete Selected ({currentView === 'actors' ? selectedActorIds.length : selectedMovieIds.length})
                 </button>
             </div>
 

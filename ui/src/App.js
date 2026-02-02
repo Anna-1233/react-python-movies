@@ -444,7 +444,7 @@ function App() {
 
 
     return (
-        <div>
+        <div className="page">
             <header>
                 <h1>My favourite movies to watch</h1>
             </header>

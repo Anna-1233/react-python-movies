@@ -61,12 +61,19 @@ ul.movies-list {
     margin-bottom: 1rem;
 }
 
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .container {
     max-width: 1800px;
     display: flex;
     flex-direction: column;
     gap: 5px;
     padding: 20px;
+    flex: 1;
 }
 
 .content {
