@@ -14,6 +14,7 @@ The project includes a demonstration SQLite database movies-extended.db with sam
 - **Actor Assignment:** Smart actor selection with pinned assigned items.
 - **Live Search:** Real-time filtering with automatic reset on navigation.
 - **Empty States:** Messages when no results are available.
+- **Loading States:** Visual feedback during data fetching implemented with `lds-ellipsis` from https://loading.io/css/.
 - **User Feedback:** Toast notifications for all user actions.
 
 ### Backend (FastAPI)
