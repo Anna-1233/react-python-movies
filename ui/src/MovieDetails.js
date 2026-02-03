@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faArrowLeft, faUser, faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {faArrowLeft, faUser} from '@fortawesome/free-solid-svg-icons';
 import {toast} from 'react-toastify';
+import './MovieDetails.css'
 
 export default function MovieDetails({movieId, onBack}) {
     const [movie, setMovie] = useState(null);
@@ -36,9 +37,14 @@ export default function MovieDetails({movieId, onBack}) {
 
     if (loading) {
         return (
-            <div className="empty-state">
-                <FontAwesomeIcon icon={faSpinner} spin size="2x"/>
-                <p>Loading movie data...</p>
+            <div className="loading-state">
+                <div className="lds-ellipsis">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <p className="loading-text">Loading movie data...</p>
             </div>
         );
     }
