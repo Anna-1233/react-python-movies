@@ -13,6 +13,8 @@ import ActorsList from "./ActorsList";
 
 import Navbar from "./Navbar";
 
+import Loader from './Loader';
+
 
 function App() {
     // States:
@@ -28,6 +30,8 @@ function App() {
     const [editingActor, setEditingActor] = useState(null);
     const [selectedActorIds, setSelectedActorIds] = useState([]);
 
+    const [loadingMovies, setLoadingMovies] = useState(true);
+    const [loadingActors, setLoadingActors] = useState(true);
 
     // Get movies list
     useEffect(() => {
@@ -42,6 +46,8 @@ function App() {
                 }
             } catch (e) {
                 toast.error("Connection failed: Could not reach the server.");
+            } finally {
+                setLoadingMovies(false);
             }
         }
 
@@ -252,22 +258,27 @@ function App() {
     // ------------------ Actors ---------------------
     // get actors list
     useEffect(() => {
-        async function fetchActors() {
-            try {
-                const response = await fetch('/actors');
-                if (response.ok) {
-                    const data = await response.json();
-                    setActors(data);
-                } else {
-                    toast.error("Failed to load actors from server.");
+        if (currentView === 'actors' || currentView === 'add-movie') {
+            async function fetchActors() {
+                setLoadingActors(true);
+                try {
+                    const response = await fetch('/actors');
+                    if (response.ok) {
+                        const data = await response.json();
+                        setActors(data);
+                    } else {
+                        toast.error("Failed to load actors from server.");
+                    }
+                } catch (e) {
+                    toast.error("Connection failed: Could not reach the server.");
+                } finally {
+                    setLoadingActors(false);
                 }
-            } catch (e) {
-                toast.error("Connection failed: Could not reach the server.");
             }
-        }
 
-        fetchActors();
-    }, []);
+            fetchActors();
+        }
+    }, [currentView]);
 
     // Add actor
     async function handleAddActor(actor) {
@@ -467,7 +478,9 @@ function App() {
                 <main className="content">
                     {currentView === 'movies' && (
                         <>
-                            {movies.length === 0 ? (
+                            {loadingMovies ? (
+                                <Loader text="Loading movies..."/>
+                            ) : movies.length === 0 ? (
                                 <div className="empty-state">
                                     <p>No movies yet. Maybe add something?</p>
                                     <button onClick={() => setCurrentView('add-movie')}>Add your first movie!</button>
@@ -517,7 +530,9 @@ function App() {
 
                     {currentView === 'actors' && (
                         <>
-                            {actors.length === 0 ? (
+                            {loadingActors ? (
+                                <Loader text="Loading actors..."/>
+                            ) : actors.length === 0 ? (
                                 <div className="empty-state">
                                     <p>No actors yet. Maybe add someone?</p>
                                     <button onClick={() => setCurrentView('add-actor')}>Add first actor!</button>

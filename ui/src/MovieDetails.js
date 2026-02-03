@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowLeft, faUser} from '@fortawesome/free-solid-svg-icons';
 import {toast} from 'react-toastify';
-import './MovieDetails.css'
+import Loader from './Loader';
 
 export default function MovieDetails({movieId, onBack}) {
     const [movie, setMovie] = useState(null);
@@ -35,18 +35,9 @@ export default function MovieDetails({movieId, onBack}) {
         fetchAllData();
     }, [movieId]);
 
+
     if (loading) {
-        return (
-            <div className="loading-state">
-                <div className="lds-ellipsis">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-                <p className="loading-text">Loading movie data...</p>
-            </div>
-        );
+        return <Loader text="Loading movie data..."/>;
     }
 
     return (

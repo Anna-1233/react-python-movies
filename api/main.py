@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Body
-import requests
+import time
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from typing import Any, List
@@ -41,6 +41,7 @@ def get_actors():
     """
     Retrieve a list of all actors from the database.
     """
+    # time.sleep(2)
     rows = crud.get_all_actors()
     return [dict(row) for row in rows]
 
@@ -156,6 +157,7 @@ def get_movies():
     """
     Retrieve a list of all movies from the database.
     """
+    # time.sleep(2)
     rows = crud.get_all_movies()
     return [dict(row) for row in rows]
 
