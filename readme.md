@@ -57,7 +57,7 @@ react-python-movies/
 │   │   ├── App.js          # Root component & main state management
 │   │   ├── App.css         # Global styles    
 │   │   ├── index.js        # Application entry point
-│   │   └── *.js/*.css      # UI components with styles (Forms, Lists, Navbar)         
+│   │   └── *.js/*.css      # UI components with styles (Forms, Lists, Navbar, Loader)         
 │   ├── package.json
 │   ├── package-lock.json
 │   ├── .gitignore

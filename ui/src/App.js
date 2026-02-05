@@ -542,7 +542,7 @@ function App() {
                                     <ActorsList actors={filteredActors}
                                                 onDeleteActor={handleDelActor}
                                                 onEditActor={prepareEditActor}
-                                        // onShowDetails={handleShowDetails}
+                                                // onShowDetails={handleShowDetails}
                                                 selectedIds={selectedActorIds}
                                                 onToggleSelect={toggleActorSelection}
                                     />
